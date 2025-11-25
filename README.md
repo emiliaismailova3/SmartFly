@@ -1,60 +1,100 @@
-✈️ SmartFly - Flight Price Predictor
-A web application for predicting airline ticket prices using Machine Learning (Random Forest algorithm).
+✈️ SmartFly – Flight Price Predictor
+A web application that estimates airline ticket prices using Machine Learning (Random Forest algorithm).
 
 🎯 Features
-Price prediction based on route, date, airline, and other parameters
-User-friendly web interface
-Real-time predictions
+
+Price prediction based on route, date, airline, and additional parameters
+
+Simple and intuitive web interface
+
+Instant, real-time results
+
 🛠️ Technologies
-Python - Core programming language
-Flask - Web framework
-Random Forest - Machine Learning algorithm
-Scikit-learn - ML library
-Pandas - Data processing
-HTML/CSS - Frontend
+
+Python – Core programming language
+
+Flask – Web framework
+
+Random Forest – Machine Learning algorithm
+
+Scikit-learn – ML toolkit
+
+Pandas – Data handling
+
+HTML/CSS – Frontend structure and styling
+
 📊 About the Model
+
 Algorithm: Random Forest Regressor
+
 Model Size: 472 MB
-Features: route, departure date, airline, service class
+
+Features used: route, departure date, airline, service class
+
 🚀 Installation and Setup
+
 1. Clone the repository
+
 git clone https://github.com/ismailovaemilia615-design/SmartFly.git
 cd SmartFly
+
+
 2. Install dependencies
+
 pip install flask pandas scikit-learn numpy
-3. Download trained models
-Models are stored separately due to large file size (472 MB total).
 
-📥 Download all models from Google Drive
 
-Create a models/ folder and place the downloaded files there:
+3. Download the pretrained models
+The trained models are stored separately due to their large size (472 MB total).
+
+📥 Download all model files from Google Drive
+
+Create a models/ directory and place the downloaded files inside:
 
 SmartFly/
-└── models/              ← create this folder
+└── models/
     ├── random_forest_model.pkl
     ├── label_encoders.pkl
     └── features.pkl
-4. Run the application
+
+
+4. Start the application
+
 python app.py
-Open your browser: http://localhost:5000
+
+
+Open in browser: http://localhost:5000
 
 📁 Project Structure
-
 SmartFly/
 ├── app.py                      # Main Flask application
 ├── models/                     # ML models (download separately)
 │   ├── random_forest_model.pkl # Trained Random Forest model
-│   ├── label_encoders.pkl      # Label encoders for categorical features
-│   └── features.pkl            # Feature list
+│   ├── label_encoders.pkl      # Encoders for categorical data
+│   └── features.pkl            # Feature definitions
 ├── templates/                  # HTML templates
-│   ├── index.html             # Main page
-│   └── predict.html           # Results page
-└── static/                     # Static files
-    └── style.css              # Styling
-📈 Model Performance
-Algorithm: Random Forest Regressor
-Training Data: Large dataset of flight records
+│   ├── index.html              # Main page
+│   └── predict.html            # Prediction result page
+└── static/
+    └── style.css               # Styling
 
+📈 Model Performance
+
+Algorithm: Random Forest Regressor
+
+Training Data: Large dataset of flight information
+
+Model Size: 472 MB of learned parameters
+
+💡 How It Works
+
+User enters flight details (route, date, airline, etc.)
+
+The model processes the input via the Random Forest algorithm
+
+The system outputs the predicted price
+
+Results are displayed on a clean, user-friendly page
 
 🖼️ Screenshots
 ![Изображение WhatsApp 2025-11-25 в 15 38 09_b46a5bfe](https://github.com/user-attachments/assets/3868dfcd-9363-45e2-8d69-c8fb561fc17d)

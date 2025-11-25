@@ -24,7 +24,7 @@ A web application for predicting airline ticket prices using Machine Learning (R
 
 ### 1. Clone the repository
 bash
-git clone https://github.com/nazrinsultanova1/SmartFly.git
+git clone https://github.com/ismailovaemilia615-design/SmartFly.git
 cd SmartFly
 
 

@@ -39,6 +39,7 @@ python app.py
 Open your browser: http://localhost:5000
 
 📁 Project Structure
+
 SmartFly/
 ├── app.py                      # Main Flask application
 ├── models/                     # ML models (download separately)

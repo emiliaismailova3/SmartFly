@@ -79,7 +79,7 @@ SmartFly/
 
 ## Author
 
-**Emiliya Ismailova**
+**Emiliia Ismailova**
 [LinkedIn](https://linkedin.com/in/emiliya-ismailova) · [GitHub](https://github.com/emiliaismailova3)
 
 This project was created for educational purposes.

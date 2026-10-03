@@ -1,105 +1,85 @@
-# ✈ SmartFly - Flight Price Predictor
+# ✈ SmartFly — Flight Price Predictor
 
-A web application for predicting airline ticket prices using Machine Learning (Random Forest algorithm).
+A Flask web app that predicts airline ticket prices for Indian domestic flights with a Random Forest regression model, and shows how the price changes over the next 30 days so the user can pick the cheapest day to fly.
 
-## 🎯 Features
-- Price prediction based on route, date, airline, and other parameters
-- User-friendly web interface
-- Real-time predictions
+Capstone project of the Coders Azerbaijan Data Science Bootcamp (2025).
 
-## 🛠 Technologies
-- *Python* - Core programming language
-- *Flask* - Web framework
-- *Random Forest* - Machine Learning algorithm
-- *Scikit-learn* - ML library
-- *Pandas* - Data processing
-- *HTML/CSS* - Frontend
+![SmartFly screenshot 1](https://github.com/user-attachments/assets/44fdddac-dd03-4f0e-a0c1-1b75d81bfae5)
 
-## 📊 About the Model
-- *Algorithm*: Random Forest Regressor
-- *Model Size*: 472 MB
-- *Features*: route, departure date, airline, service class
+## Features
 
-## 🚀 Installation and Setup
+- Price prediction from airline, route, departure time, number of stops and travel class
+- 30-day price forecast, with every day labelled **Cheap / Average / Expensive**
+- Cheapest and most expensive day highlighted
+- Model comparison table on the home page
 
-### 1. Clone the repository
-bash
+## Model
+
+Seven regression models were trained and compared; Random Forest gave the best results on the test set:
+
+| Model | R² | RMSE | MAE |
+|---|---|---|---|
+| **Random Forest** | **0.9834** | **34.60** | **13.15** |
+| XGBoost | 0.9808 | 37.29 | 20.38 |
+| CatBoost | 0.9802 | 37.84 | 20.85 |
+| LightGBM | 0.9759 | 41.74 | 24.13 |
+| Gradient Boosting | 0.9570 | 55.77 | 33.43 |
+| AdaBoost | 0.9349 | 68.62 | 43.02 |
+| Linear Regression | 0.9057 | 82.59 | 55.18 |
+
+**Features:** airline, source city, destination city, departure time, stops, class, days left before departure. Categorical features are label-encoded.
+
+## Tech Stack
+
+Python · scikit-learn · pandas · NumPy · Flask · HTML/CSS/JavaScript
+
+## Run Locally
+
+```bash
 git clone https://github.com/emiliaismailova3/SmartFly.git
 cd SmartFly
-
-
-### 2. Install dependencies
-bash
-pip install flask pandas scikit-learn numpy
-
-
-### 3. Download trained models
-Models are stored separately due to large file size (472 MB total).
-
-📥 **[Download all models from Google Drive](https://drive.google.com/drive/folders/1GDkFQlbJY7krBDZPhQy_hdoPj25-NaqC?usp=drive_link)**
-
-Create a models/ folder and place the downloaded files there:
-
-SmartFly/
-└── models/              ← create this folder
-    ├── random_forest_model.pkl
-    ├── label_encoders.pkl
-    └── features.pkl
-
-
-### 4. Run the application
-bash
-python app.py
-
-
-Open your browser: http://localhost:5000
-
-## 📁 Project Structure
-
-SmartFly/
-├── app.py                      # Main Flask application
-├── models/                     # ML models (download separately)
-│   ├── random_forest_model.pkl # Trained Random Forest model
-│   ├── label_encoders.pkl      # Label encoders for categorical features
-│   └── features.pkl            # Feature list
-├── templates/                  # HTML templates
-│   ├── index.html             # Main page
-│   └── predict.html           # Results page
-└── static/                     # Static files
-    └── style.css              # Styling
-
-
-## 📈 Model Performance
-- *Algorithm*: Random Forest Regressor
-- *Training Data*: Large dataset of flight records
-- *Model Size*: 472 MB of trained parameters
-
-## 💡 How It Works
-1. User inputs flight details (route, date, airline, etc.)
-2. Model processes the input using trained Random Forest algorithm
-3. System returns predicted price range
-4. Results displayed in user-friendly interface
-
-## 🖼 Screenshots
-![Изображение WhatsApp 2025-11-25 в 15 38 09_c7d8e494](https://github.com/user-attachments/assets/44fdddac-dd03-4f0e-a0c1-1b75d81bfae5)
-![Изображение WhatsApp 2025-11-25 в 15 38 09_616d2d21](https://github.com/user-attachments/assets/c0f134a1-53ee-487e-b631-cc20a9523c8b)
-![Изображение WhatsApp 2025-11-25 в 15 38 08_04175ff5](https://github.com/user-attachments/assets/4590cfae-9800-4bf9-957f-d0c885614b13)
-![Изображение WhatsApp 2025-11-25 в 15 38 08_12aaa6c1](https://github.com/user-attachments/assets/10416ad1-8b53-40eb-99f8-a28d27261964)
-
-
-
-
-
-
-## 👤 Author
-*Emilyia Ismailova*
-
-[LinkedIn](http://www.linkedin.com/in/emiliya-ismailova-b16202370) | [GitHub](https://github.com/emiliaismailova3)
-## 📝 Note
-Models are not included in the repository due to GitHub file size limitations. Please download them from the Google Drive link above.
-
-## 🔒 License
-This project was created for educational purposes.
+pip install -r requirements.txt
 ```
 
+The trained model files (~472 MB) are too large for GitHub. [Download them from Google Drive](https://drive.google.com/drive/folders/1GDkFQlbJY7krBDZPhQy_hdoPj25-NaqC?usp=drive_link) and put them in a `models/` folder:
 
+```
+models/
+├── random_forest_model.pkl
+├── label_encoders.pkl
+└── features.pkl
+```
+
+Then start the app and open http://localhost:5000:
+
+```bash
+python app.py
+```
+
+## Project Structure
+
+```
+SmartFly/
+├── app.py              # Flask app: loads the model, serves pages and /api/predict
+├── templates/
+│   ├── index.html      # Home page with model comparison
+│   └── predict.html    # Prediction form and 30-day results
+├── static/
+│   └── style.css
+├── models/             # Model files (download separately, not in Git)
+├── requirements.txt
+└── README.md
+```
+
+## Screenshots
+
+![SmartFly screenshot 2](https://github.com/user-attachments/assets/c0f134a1-53ee-487e-b631-cc20a9523c8b)
+![SmartFly screenshot 3](https://github.com/user-attachments/assets/4590cfae-9800-4bf9-957f-d0c885614b13)
+![SmartFly screenshot 4](https://github.com/user-attachments/assets/10416ad1-8b53-40eb-99f8-a28d27261964)
+
+## Author
+
+**Emiliya Ismailova**
+[LinkedIn](https://linkedin.com/in/emiliya-ismailova) · [GitHub](https://github.com/emiliaismailova3)
+
+This project was created for educational purposes.

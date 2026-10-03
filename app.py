@@ -5,9 +5,11 @@ import pickle
 from datetime import datetime, timedelta
 import os
 import time
-import math # Добавлен для математических операций
 
 app = Flask(__name__)
+
+CATEGORICAL_FEATURES = ['airline', 'source_city', 'departure_time',
+                        'stops', 'destination_city', 'class']
 
 def get_css_version():
     css_path = 'static/style.css'
@@ -30,10 +32,7 @@ try:
 except FileNotFoundError:
     print("❌ Model files not found.")
     model = None
-    encodings = {
-        'airline': {}, 'source_city': {}, 'departure_time': {}, 
-        'stops': {}, 'destination_city': {}, 'class': {}
-    }
+    encodings = {}
     feature_columns = []
 
 model_comparison = {
@@ -62,17 +61,17 @@ def predict_page():
                           min_date=today.isoformat(),
                           max_date=max_date.isoformat())
 
-# --- НОВАЯ ФУНКЦИЯ КЛАССИФИКАЦИИ ЦЕН ---
+# Label each predicted price as Cheap / Average / Expensive
+# relative to the other prices in the same 30-day window.
 def classify_prices(prices, base_price=None):
     if not prices:
         return []
 
-    # Используем все 30 цен для определения порогов
     prices_array = np.array(prices)
     mean_price = np.mean(prices_array)
     std_dev = np.std(prices_array)
     
-    # Пороги: Cheap < (Mean - 0.5 * StdDev), Expensive > (Mean + 0.5 * StdDev)
+    # Cheap < mean - 0.5*std, Expensive > mean + 0.5*std
     threshold_cheap = mean_price - 0.5 * std_dev
     threshold_expensive = mean_price + 0.5 * std_dev
     
@@ -92,28 +91,31 @@ def predict():
         if model is None:
             return jsonify({'success': False, 'error': 'Model not loaded'})
         
-        data = request.json
-        
-        # 1. Сначала рассчитываем все 30 цен без категории
+        data = request.get_json(silent=True) or {}
+        missing = [f for f in CATEGORICAL_FEATURES if not data.get(f)]
+        if missing:
+            return jsonify({'success': False, 'error': f"Missing fields: {', '.join(missing)}"}), 400
+
+        # 1. Predict a price for each of the next 30 days
         raw_predictions = []
         current_date = datetime.now()
         
         for days_left in range(1, 31):
             input_data = {}
             for feature in feature_columns:
-                if feature in ['airline', 'source_city', 'departure_time', 'stops', 'destination_city', 'class']:
-                    # Проверяем наличие ключа в data и наличие значения в энкодере
+                if feature in CATEGORICAL_FEATURES:
                     value = data.get(feature)
-                    if value in encodings.get(feature, {}).classes_:
-                        input_data[feature] = encodings[feature].transform([value])[0]
+                    encoder = encodings.get(feature)
+                    if encoder is not None and value in encoder.classes_:
+                        input_data[feature] = encoder.transform([value])[0]
                     else:
                         input_data[feature] = 0
                 elif feature == 'days_left':
                     input_data[feature] = days_left
                 else:
-                    input_data[feature] = data.get(feature, 0) # Используем .get для безопасности
+                    input_data[feature] = data.get(feature, 0)
             
-            # Обеспечиваем, что все признаки присутствуют
+            # Make sure all model features are present and in the right order
             features_df = pd.DataFrame([input_data]).reindex(columns=feature_columns, fill_value=0)
             
             price_usd = model.predict(features_df)[0]
@@ -127,13 +129,11 @@ def predict():
                 'price_inr': max(1680, round(price_inr))
             })
             
-        # 2. Получаем список только цен USD
+        # 2. Classify prices within the window
         price_list_usd = [p['price_usd'] for p in raw_predictions]
-        
-        # 3. Классифицируем цены
         price_categories = classify_prices(price_list_usd)
         
-        # 4. Объединяем категории с прогнозами
+        # 3. Attach the category to each prediction
         final_predictions = []
         for i, pred in enumerate(raw_predictions):
             pred['price_category'] = price_categories[i]
@@ -149,10 +149,10 @@ def predict():
         })
         
     except Exception as e:
-        # Добавляем более детальное логирование ошибки
-        print(f"Prediction Error: {e}")
-        return jsonify({'success': False, 'error': str(e)})
+        app.logger.exception("Prediction error")
+        return jsonify({'success': False, 'error': 'Prediction failed'}), 500
 
 if __name__ == '__main__':
     print("🚀 Starting Flight Price Predictor...")
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    # Debug mode only when FLASK_DEBUG=1 is set
+    app.run(debug=os.environ.get('FLASK_DEBUG') == '1', port=5000)
